@@ -529,7 +529,6 @@
       <h2>Sign Up</h2>
       <form id="signup-form">
         <input type="text" id="signup-name" placeholder="Full Name" required>
-        <input type="tel" id="signup-phone" placeholder="Phone Number" required>
         <input type="date" id="signup-dob" placeholder="Date of Birth" required>
         <input type="email" id="signup-email" placeholder="Email" required>
         <input type="password" id="signup-password" placeholder="Password" required>
@@ -664,7 +663,7 @@
       <div class="section-right">
         <div class="progress-bar-bg" style="position:relative; z-index:1;"><div class="progress-bar-fill" id="todo-progress"></div></div>
         <div class="progress-bar-emoji" id="progress-emoji">⬜</div>
-        <div class="tasks-motivation" id="tasks-motivation"></div>
+        <div class="motivation" id="tasks-motivation"></div>
       </div>
     </div>
   </div>
@@ -677,7 +676,7 @@
         <!-- Achievements Form View -->
         <div id="achievements-form-view">
           <div style="font-size:2.2em;font-weight:800;color:#7c5fe6;margin-bottom:10px;">🏆 Achievements</div>
-          <div class="motivation" id="achievements-motivation" style="font-size:0.9em;color:#666;margin-bottom:15px;font-style:italic;text-align:center;"></div>
+          <div class="motivation" id="achievements-motivation"></div>
           <div style="display:flex;justify-content:flex-end;margin-bottom:15px;">
             <button id="history-btn" style="padding:8px 16px;background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);color:white;border:none;border-radius:20px;font-size:0.8em;cursor:pointer;width:80px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;box-shadow:0 4px 15px rgba(102,126,234,0.3);transition:all 0.3s ease;">HISTORY</button>
           </div>
@@ -800,17 +799,16 @@
     signupForm.addEventListener('submit', function(e) {
       e.preventDefault();
       const name = document.getElementById('signup-name').value.trim();
-      const phone = document.getElementById('signup-phone').value.trim();
       const dob = document.getElementById('signup-dob').value;
       const email = document.getElementById('signup-email').value.trim();
       const password = document.getElementById('signup-password').value;
-      if (!name || !phone || !dob || !email || !password) return;
+      if (!name || !dob || !email || !password) return;
       let users = getUsers();
       if (users[email]) {
         signupError.textContent = 'User already exists. Please login.';
         return;
       }
-      users[email] = { name, phone, dob, email, password };
+      users[email] = { name, dob, email, password };
       setUsers(users);
       setCurrentUser(email);
       showDashboard();
@@ -855,7 +853,6 @@
         document.getElementById('login-email').value = '';
         document.getElementById('login-password').value = '';
         document.getElementById('signup-name').value = '';
-        document.getElementById('signup-phone').value = '';
         document.getElementById('signup-dob').value = '';
         document.getElementById('signup-email').value = '';
         document.getElementById('signup-password').value = '';
