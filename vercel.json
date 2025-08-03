@@ -1,14 +1,10 @@
 {
   "version": 2,
-  "buildCommand": "npm run build",
-  "outputDirectory": "frontend/build",
-  "installCommand": "npm install",
-  "framework": "create-react-app",
+  "buildCommand": "echo 'Static HTML - no build needed'",
+  "outputDirectory": "frontend/public",
+  "installCommand": "echo 'Static HTML - no install needed'",
+  "framework": null,
   "routes": [
-    {
-      "src": "/static/(.*)",
-      "dest": "/static/$1"
-    },
     {
       "src": "/(.*)",
       "dest": "/index.html"
