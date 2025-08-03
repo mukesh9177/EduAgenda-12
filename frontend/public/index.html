@@ -320,6 +320,8 @@
       <h2 class="section-title">Todo List</h2>
       <form id="todo-form">
         <input type="text" id="todo-input" placeholder="Add a new todo..." required>
+        <input type="date" id="todo-date" required>
+        <input type="time" id="todo-time" required>
         <button type="submit" class="login-btn">Add Todo</button>
       </form>
       <ul id="todo-list" style="list-style: none; padding: 0; margin-top: 20px;"></ul>
@@ -348,6 +350,7 @@
       <form id="achievement-form">
         <input type="text" id="achievement-title" placeholder="Achievement title..." required>
         <input type="text" id="achievement-description" placeholder="Description..." required>
+        <input type="date" id="achievement-date" required>
         <button type="submit" class="login-btn">Add Achievement</button>
       </form>
       <ul id="achievement-list" style="list-style: none; padding: 0; margin-top: 20px;"></ul>
@@ -355,6 +358,34 @@
   </div>
 
   <script>
+    // Data persistence functions
+    function saveTodos(todos) {
+      localStorage.setItem('todos', JSON.stringify(todos));
+    }
+
+    function getTodos() {
+      const todos = localStorage.getItem('todos');
+      return todos ? JSON.parse(todos) : [];
+    }
+
+    function saveEvents(events) {
+      localStorage.setItem('events', JSON.stringify(events));
+    }
+
+    function getEvents() {
+      const events = localStorage.getItem('events');
+      return events ? JSON.parse(events) : [];
+    }
+
+    function saveAchievements(achievements) {
+      localStorage.setItem('achievements', JSON.stringify(achievements));
+    }
+
+    function getAchievements() {
+      const achievements = localStorage.getItem('achievements');
+      return achievements ? JSON.parse(achievements) : [];
+    }
+
     // Simple authentication (for demo purposes)
     let isLoggedIn = false;
 
@@ -367,6 +398,7 @@
       if (email && password) {
         isLoggedIn = true;
         showDashboard();
+        loadAllData(); // Load saved data
       } else {
         showError('Please fill in all fields');
       }
@@ -387,6 +419,7 @@
     function showSection(section) {
       hideAllSections();
       document.getElementById(section + '-section').style.display = 'flex';
+      renderSection(section);
     }
 
     function hideAllSections() {
@@ -407,99 +440,217 @@
       alert('Signup functionality would be implemented here');
     }
 
-    // Todo functionality
+    // Load all saved data
+    function loadAllData() {
+      renderTodos();
+      renderEvents();
+      renderAchievements();
+    }
+
+    // Todo functionality with persistence
     document.getElementById('todo-form').addEventListener('submit', function(e) {
       e.preventDefault();
       const input = document.getElementById('todo-input');
-      const todo = input.value;
-      if (todo) {
+      const date = document.getElementById('todo-date');
+      const time = document.getElementById('todo-time');
+      
+      const todo = {
+        text: input.value,
+        date: date.value,
+        time: time.value,
+        completed: false,
+        createdAt: new Date().toISOString()
+      };
+      
+      if (todo.text && todo.date && todo.time) {
         addTodo(todo);
         input.value = '';
+        date.value = '';
+        time.value = '';
       }
     });
 
-    function addTodo(text) {
+    function addTodo(todo) {
+      const todos = getTodos();
+      todos.push(todo);
+      saveTodos(todos);
+      renderTodos();
+    }
+
+    function renderTodos() {
+      const todos = getTodos();
       const list = document.getElementById('todo-list');
-      const li = document.createElement('li');
-      li.innerHTML = `
-        <div style="display: flex; align-items: center; gap: 10px; padding: 10px; background: #f5f5f5; margin: 5px 0; border-radius: 5px;">
-          <input type="checkbox" onchange="toggleTodo(this)">
-          <span>${text}</span>
-          <button onclick="deleteTodo(this)" style="margin-left: auto; background: #ff4444; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">Delete</button>
-        </div>
-      `;
-      list.appendChild(li);
+      list.innerHTML = '';
+      
+      todos.forEach((todo, index) => {
+        const li = document.createElement('li');
+        const date = new Date(todo.date);
+        const formattedDate = date.toLocaleDateString('en-US', { 
+          weekday: 'short', 
+          year: 'numeric', 
+          month: 'short', 
+          day: 'numeric' 
+        });
+        
+        li.innerHTML = `
+          <div style="display: flex; align-items: center; gap: 10px; padding: 15px; background: #f5f5f5; margin: 8px 0; border-radius: 8px; border-left: 4px solid #4f8cff;">
+            <input type="checkbox" onchange="toggleTodo(${index})" ${todo.completed ? 'checked' : ''}>
+            <span style="${todo.completed ? 'text-decoration: line-through; color: #888;' : ''}">${todo.text}</span>
+            <span style="margin-left: auto; font-size: 0.9em; color: #7c5fe6;">📅 ${formattedDate} at ${todo.time}</span>
+            <button onclick="deleteTodo(${index})" style="margin-left: 10px; background: #ff4444; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">Delete</button>
+          </div>
+        `;
+        list.appendChild(li);
+      });
     }
 
-    function toggleTodo(checkbox) {
-      const span = checkbox.nextElementSibling;
-      if (checkbox.checked) {
-        span.style.textDecoration = 'line-through';
-        span.style.color = '#888';
-      } else {
-        span.style.textDecoration = 'none';
-        span.style.color = '#000';
-      }
+    function toggleTodo(index) {
+      const todos = getTodos();
+      todos[index].completed = !todos[index].completed;
+      saveTodos(todos);
+      renderTodos();
     }
 
-    function deleteTodo(button) {
-      button.parentElement.remove();
+    function deleteTodo(index) {
+      const todos = getTodos();
+      todos.splice(index, 1);
+      saveTodos(todos);
+      renderTodos();
     }
 
-    // Event functionality
+    // Event functionality with persistence
     document.getElementById('event-form').addEventListener('submit', function(e) {
       e.preventDefault();
       const title = document.getElementById('event-title').value;
       const date = document.getElementById('event-date').value;
-      if (title && date) {
-        addEvent(title, date);
+      
+      const event = {
+        title: title,
+        date: date,
+        createdAt: new Date().toISOString()
+      };
+      
+      if (event.title && event.date) {
+        addEvent(event);
         document.getElementById('event-form').reset();
       }
     });
 
-    function addEvent(title, date) {
+    function addEvent(event) {
+      const events = getEvents();
+      events.push(event);
+      saveEvents(events);
+      renderEvents();
+    }
+
+    function renderEvents() {
+      const events = getEvents();
       const list = document.getElementById('event-list');
-      const li = document.createElement('li');
-      li.innerHTML = `
-        <div style="padding: 10px; background: #f5f5f5; margin: 5px 0; border-radius: 5px;">
-          <strong>${title}</strong><br>
-          <small>${new Date(date).toLocaleString()}</small>
-          <button onclick="deleteEvent(this)" style="float: right; background: #ff4444; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">Delete</button>
-        </div>
-      `;
-      list.appendChild(li);
+      list.innerHTML = '';
+      
+      events.forEach((event, index) => {
+        const li = document.createElement('li');
+        const date = new Date(event.date);
+        const formattedDate = date.toLocaleString('en-US', { 
+          weekday: 'short', 
+          year: 'numeric', 
+          month: 'short', 
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+        
+        li.innerHTML = `
+          <div style="padding: 15px; background: #f5f5f5; margin: 8px 0; border-radius: 8px; border-left: 4px solid #7c5fe6;">
+            <strong style="color: #333;">${event.title}</strong><br>
+            <small style="color: #7c5fe6;">📅 ${formattedDate}</small>
+            <button onclick="deleteEvent(${index})" style="float: right; background: #ff4444; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">Delete</button>
+          </div>
+        `;
+        list.appendChild(li);
+      });
     }
 
-    function deleteEvent(button) {
-      button.parentElement.remove();
+    function deleteEvent(index) {
+      const events = getEvents();
+      events.splice(index, 1);
+      saveEvents(events);
+      renderEvents();
     }
 
-    // Achievement functionality
+    // Achievement functionality with persistence
     document.getElementById('achievement-form').addEventListener('submit', function(e) {
       e.preventDefault();
       const title = document.getElementById('achievement-title').value;
       const description = document.getElementById('achievement-description').value;
-      if (title && description) {
-        addAchievement(title, description);
+      const date = document.getElementById('achievement-date').value;
+      
+      const achievement = {
+        title: title,
+        description: description,
+        date: date,
+        createdAt: new Date().toISOString()
+      };
+      
+      if (achievement.title && achievement.description && achievement.date) {
+        addAchievement(achievement);
         document.getElementById('achievement-form').reset();
       }
     });
 
-    function addAchievement(title, description) {
-      const list = document.getElementById('achievement-list');
-      const li = document.createElement('li');
-      li.innerHTML = `
-        <div style="padding: 10px; background: #f5f5f5; margin: 5px 0; border-radius: 5px;">
-          <strong>🏆 ${title}</strong><br>
-          <small>${description}</small>
-          <button onclick="deleteAchievement(this)" style="float: right; background: #ff4444; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">Delete</button>
-        </div>
-      `;
-      list.appendChild(li);
+    function addAchievement(achievement) {
+      const achievements = getAchievements();
+      achievements.push(achievement);
+      saveAchievements(achievements);
+      renderAchievements();
     }
 
-    function deleteAchievement(button) {
-      button.parentElement.remove();
+    function renderAchievements() {
+      const achievements = getAchievements();
+      const list = document.getElementById('achievement-list');
+      list.innerHTML = '';
+      
+      achievements.forEach((achievement, index) => {
+        const li = document.createElement('li');
+        const date = new Date(achievement.date);
+        const formattedDate = date.toLocaleDateString('en-US', { 
+          weekday: 'short', 
+          year: 'numeric', 
+          month: 'short', 
+          day: 'numeric'
+        });
+        
+        li.innerHTML = `
+          <div style="padding: 15px; background: #f5f5f5; margin: 8px 0; border-radius: 8px; border-left: 4px solid #ffd700;">
+            <strong style="color: #333;">🏆 ${achievement.title}</strong><br>
+            <small style="color: #666;">${achievement.description}</small><br>
+            <small style="color: #7c5fe6;">📅 ${formattedDate}</small>
+            <button onclick="deleteAchievement(${index})" style="float: right; background: #ff4444; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">Delete</button>
+          </div>
+        `;
+        list.appendChild(li);
+      });
+    }
+
+    function deleteAchievement(index) {
+      const achievements = getAchievements();
+      achievements.splice(index, 1);
+      saveAchievements(achievements);
+      renderAchievements();
+    }
+
+    function renderSection(section) {
+      switch(section) {
+        case 'todos':
+          renderTodos();
+          break;
+        case 'events':
+          renderEvents();
+          break;
+        case 'achievements':
+          renderAchievements();
+          break;
+      }
     }
   </script>
 </body>
