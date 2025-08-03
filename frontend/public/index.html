@@ -683,6 +683,7 @@
           <form id="completed-form">
             <input type="text" id="completed-input" placeholder="What have you done?" required>
             <input type="date" id="completed-date" required>
+            <input type="file" id="achievement-file" accept="image/*,.pdf,.doc,.docx" style="margin: 10px 0;">
             <input type="submit" value="Add">
           </form>
           <ul class="done-list" id="done-list"></ul>
@@ -1218,7 +1219,17 @@
       completed.forEach((task, idx) => {
         const li = document.createElement('li');
         li.className = 'done-item';
-        li.innerHTML = `<span>${task.text} <span style='font-size:0.95em;color:#7c5fe6;'>(on ${task.date})</span></span> <button onclick="removeCompleted(${idx})">Remove</button>`;
+        
+        let fileDisplay = '';
+        if (task.fileName) {
+          if (task.fileType && task.fileType.startsWith('image/')) {
+            fileDisplay = `<br><img src="${task.fileData}" alt="${task.fileName}" style="max-width: 200px; max-height: 150px; border-radius: 5px; margin-top: 5px;">`;
+          } else {
+            fileDisplay = `<br><a href="${task.fileData}" download="${task.fileName}" style="color: #4f8cff; text-decoration: none;">📎 ${task.fileName}</a>`;
+          }
+        }
+        
+        li.innerHTML = `<span>${task.text} <span style='font-size:0.95em;color:#7c5fe6;'>(on ${task.date})</span></span>${fileDisplay} <button onclick="removeCompleted(${idx})">Remove</button>`;
         doneList.appendChild(li);
       });
       if (completed.length === 0) {
@@ -1230,16 +1241,42 @@
       e.preventDefault();
       const task = completedInput.value.trim();
       const date = completedDate.value;
+      const fileInput = document.getElementById('achievement-file');
+      const file = fileInput.files[0];
+      
       if (task && date) {
         const completed = getCompleted();
-        completed.push({ text: task, date });
-        setCompleted(completed);
-        completedInput.value = '';
-        completedDate.value = '';
-        renderCompleted();
-        launchConfetti();
-        animateTrophy();
-        updateStreak();
+        const achievement = { text: task, date };
+        
+        // Handle file upload
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            achievement.fileName = file.name;
+            achievement.fileData = e.target.result;
+            achievement.fileType = file.type;
+            
+            completed.push(achievement);
+            setCompleted(completed);
+            completedInput.value = '';
+            completedDate.value = '';
+            fileInput.value = '';
+            renderCompleted();
+            launchConfetti();
+            animateTrophy();
+            updateStreak();
+          };
+          reader.readAsDataURL(file);
+        } else {
+          completed.push(achievement);
+          setCompleted(completed);
+          completedInput.value = '';
+          completedDate.value = '';
+          renderCompleted();
+          launchConfetti();
+          animateTrophy();
+          updateStreak();
+        }
       }
     });
     // Function to get history (deleted achievements)
@@ -1398,10 +1435,21 @@
           minute: '2-digit'
         }) : '';
         
+        let fileDisplay = '';
+        if (achievement.fileName) {
+          if (achievement.fileType && achievement.fileType.startsWith('image/')) {
+            fileDisplay = `<br><img src="${achievement.fileData}" alt="${achievement.fileName}" style="max-width: 150px; max-height: 100px; border-radius: 3px; margin-top: 3px;">`;
+          } else {
+            fileDisplay = `<br><a href="${achievement.fileData}" download="${achievement.fileName}" style="color: #4f8cff; text-decoration: none; font-size: 0.8em;">📎 ${achievement.fileName}</a>`;
+          }
+        }
+        
         div.innerHTML = `
           <div style="font-weight:600;color:#333;">${achievement.text}</div>
           <div style="font-size:0.85em;color:#7c5fe6;margin-top:3px;">📅 ${formattedDate}</div>
           <div style="font-size:0.75em;color:#ff6b6b;margin-top:2px;">🗑️ Removed: ${formattedRemovedDate}</div>
+          ${fileDisplay}
+          <button onclick="deleteFromHistory(${idx})" style="float: right; background: #ff4444; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; margin-top: 5px;">Delete Permanently</button>
         `;
         
         historyList.appendChild(div);
@@ -1427,6 +1475,17 @@
           return achievement >= yearAgo;
         default:
           return true; // 'all'
+      }
+    }
+
+    // Delete from history permanently
+    function deleteFromHistory(index) {
+      if (confirm('Are you sure you want to permanently delete this achievement from history?')) {
+        const history = getHistory();
+        history.splice(index, 1);
+        setHistory(history);
+        renderHistory();
+        updateHistoryStats();
       }
     }
 
@@ -1573,10 +1632,22 @@
           <div style="font-weight:600;color:#333;">${event.title}</div>
           <div style="font-size:0.85em;color:#7c5fe6;margin-top:3px;">📅 ${event.dateStr} at ${event.time}</div>
           <div style="font-size:0.75em;color:#ff6b6b;margin-top:2px;">🗑️ Removed: ${formattedRemovedDate}</div>
+          <button onclick="deleteFromScheduleHistory(${idx})" style="float: right; background: #ff4444; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; margin-top: 5px;">Delete Permanently</button>
         `;
         
         scheduleHistoryList.appendChild(div);
       });
+    }
+
+    // Delete from schedule history permanently
+    function deleteFromScheduleHistory(index) {
+      if (confirm('Are you sure you want to permanently delete this schedule from history?')) {
+        const eventHistory = getEventHistory();
+        eventHistory.splice(index, 1);
+        setEventHistory(eventHistory);
+        renderScheduleHistory();
+        updateScheduleHistoryStats();
+      }
     }
 
     // Update schedule history statistics
@@ -1692,10 +1763,22 @@
           <div style="font-weight:600;color:#333;">${todo.text}</div>
           <div style="font-size:0.85em;color:#7c5fe6;margin-top:3px;">📅 ${formattedDate} at ${todo.time}</div>
           <div style="font-size:0.75em;color:#ff6b6b;margin-top:2px;">🗑️ Removed: ${formattedRemovedDate}</div>
+          <button onclick="deleteFromTodoHistory(${idx})" style="float: right; background: #ff4444; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; margin-top: 5px;">Delete Permanently</button>
         `;
         
         todoHistoryList.appendChild(div);
       });
+    }
+
+    // Delete from todo history permanently
+    function deleteFromTodoHistory(index) {
+      if (confirm('Are you sure you want to permanently delete this task from history?')) {
+        const todoHistory = getTodoHistory();
+        todoHistory.splice(index, 1);
+        setTodoHistory(todoHistory);
+        renderTodoHistory();
+        updateTodoHistoryStats();
+      }
     }
 
     // Update todo history statistics
