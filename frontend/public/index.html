@@ -105,7 +105,29 @@
       box-shadow: 0 1px 4px #3466c244;
       border-color: #3466c2;
     }
-
+    /* Mascot illustration */
+    .login-mascot {
+      font-size: 4em;
+      margin-bottom: 12px;
+      text-align: center;
+      animation: mascot-bounce 1.5s infinite alternate;
+      filter: drop-shadow(0 4px 12px #a084ee55);
+      user-select: none;
+    }
+    @keyframes mascot-bounce {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-18px) scale(1.08); }
+    }
+    /* Motivational quote */
+    .login-quote {
+      font-size: 1.1em;
+      color: #7c5fe6;
+      margin-bottom: 18px;
+      text-align: center;
+      font-style: italic;
+      text-shadow: 0 2px 8px #fff8, 0 2px 8px #7c5fe688;
+      font-weight: 600;
+    }
     /* Animated login button */
     input[type="submit"].login-btn:hover, button.login-btn:hover {
       background: linear-gradient(90deg, #a084ee 0%, #4f8cff 100%) !important;
@@ -176,369 +198,1480 @@
     /* Full-page, centered section */
     .section-page {
       min-height: 100vh;
+      width: 100vw;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      position: relative;
-      z-index: 1;
+      position: fixed;
+      top: 0; left: 0;
+      z-index: 100;
+      overflow-y: auto;
+      padding: 0;
+      isolation: isolate;
+    }
+    .section-page::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(20, 24, 40, 0.68);
+      z-index: 0;
+      pointer-events: none;
+    }
+    #section-schedule.section-page {
+      background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80') center center/cover no-repeat;
+    }
+    #section-todo.section-page {
+      background: url('https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=1200&q=80') center center/cover no-repeat;
+    }
+    #section-completed.section-page {
+      background: url('https://images.unsplash.com/photo-1503676382389-4809596d5290?auto=format&fit=crop&w=1200&q=80') center center/cover no-repeat;
     }
     .section-content {
-      background: rgba(255,255,255,0.93);
-      border-radius: 24px;
-      box-shadow: 0 4px 24px rgba(160,132,238,0.13);
-      padding: 48px;
-      min-width: 400px;
-      max-width: 90vw;
-      margin: 20px;
-      position: relative;
+      background: rgba(30, 34, 50, 0.10);
+      color: #fff;
+      border-radius: 0;
+      box-shadow: none;
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
+      min-width: unset;
+      max-width: unset;
+      margin: 0;
       z-index: 2;
+      display: flex;
+      flex-direction: row;
+      align-items: stretch;
+      justify-content: stretch;
     }
-    .section-title {
-      font-size: 2.5em;
-      font-weight: 700;
-      color: #4f8cff;
-      margin-bottom: 32px;
-      text-align: center;
+    .section-left, .section-right {
+      flex: 1 1 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      padding: 48px 36px;
+      min-width: 0;
+      min-height: 0;
+      color: #fff;
     }
-    .back-btn {
+    .section-left {
+      border-right: 2px solid #e6e9f2;
+      background: #fff;
+      border-radius: 24px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+      align-items: flex-start;
+      max-width: 480px;
+      min-width: 340px;
+      margin: 48px 0 48px 48px;
+      padding: 48px 36px;
+      overflow-y: auto;
+      color: #222;
+    }
+    .section-right {
+      background: none;
+      align-items: center;
+      justify-content: center;
+      max-width: 50vw;
+      overflow-y: auto;
+      position: relative;
+    }
+    /* Section-specific SVG backgrounds */
+    .planner-bg {
       position: absolute;
-      top: 18px;
-      left: 24px;
-      background: #e6e9f2;
-      color: #333;
-      border-radius: 6px;
-      padding: 10px 24px;
-      font-size: 1.1em;
-      border: none;
-      cursor: pointer;
-      transition: background 0.2s;
-      z-index: 10;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
     }
-    .back-btn:hover {
+    .tasks-bg {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .achieve-bg {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .calendar-anim {
+      font-size: 2.5em;
+      font-weight: 900;
+      color: #7c5fe6;
+      letter-spacing: 2px;
+      text-shadow: 0 2px 8px #fff8, 0 2px 8px #7c5fe688;
+      margin-bottom: 10px;
+      animation: bounce 1.5s infinite alternate;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    @keyframes bounce {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-12px); }
+    }
+    .motivation {
+      font-size: 1.3em;
+      color: #fff;
+      margin-bottom: 22px;
+      text-align: center;
+      font-style: italic;
+      text-shadow: 0 2px 8px #0008;
+      background: linear-gradient(90deg, #4f8cff 0%, #a084ee 100%);
+      border-radius: 12px;
+      padding: 12px 18px;
+      font-weight: 700;
+      border: 2px solid #fff;
+      box-shadow: 0 2px 12px #4f8cff33;
+    }
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 48px);
+      gap: 8px;
+      margin: 24px 0 16px 0;
+      justify-content: center;
+    }
+    .calendar-day, .calendar-header {
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      font-size: 1.2em;
+      cursor: pointer;
+      background: #e6e9f2;
+      border: none;
+      transition: background 0.2s;
+    }
+    .calendar-day.selected {
       background: #4f8cff;
       color: #fff;
     }
-    /* Responsive design */
-    @media (max-width: 768px) {
-      .auth-box {
-        margin: 20px;
-        padding: 24px 20px;
-      }
+    .calendar-day.has-event {
+      border: 2.5px solid #4f8cff;
+    }
+    .calendar-header {
+      background: none;
+      font-weight: bold;
+      cursor: default;
+    }
+    .event-list, .todo-list, .done-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      width: 100%;
+    }
+    .event-item, .todo-item, .done-item {
+      background: #f7faff !important;
+      color: #222 !important;
+      box-shadow: 0 2px 8px #0003;
+      margin-bottom: 14px;
+      padding: 16px 18px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 1.15em;
+    }
+    .event-item button, .todo-item button, .done-item button {
+      margin-left: 10px;
+      background: #4f8cff !important;
+      color: #fff !important;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 16px;
+      cursor: pointer;
+      font-size: 1em;
+      transition: background 0.2s;
+    }
+    .event-item button:hover, .todo-item button:hover, .done-item button:hover {
+      background: #3466c2 !important;
+    }
+    /* To-Do Progress Bar */
+    .progress-bar-bg {
+      width: 100%;
+      height: 18px;
+      background: #222 !important;
+      border-radius: 10px;
+      margin-bottom: 18px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #4f8cff 0%, #a084ee 100%);
+      border-radius: 10px;
+      transition: width 0.4s;
+    }
+    .todo-checkbox {
+      margin-right: 12px;
+      width: 22px;
+      height: 22px;
+      accent-color: #4f8cff;
+      transform: scale(1.2);
+    }
+    /* Confetti */
+    .confetti {
+      position: fixed;
+      left: 0; top: 0; width: 100vw; height: 100vh;
+      pointer-events: none;
+      z-index: 9999;
+    }
+    @media (max-width: 700px) {
       .dashboard-cards {
-        gap: 20px;
-        margin-top: 40px;
+        flex-direction: column;
+        gap: 18px;
       }
-      .dashboard-card {
-        padding: 32px 24px;
-        min-width: 200px;
-        font-size: 1.2em;
+      .auth-box, .section-content {
+        min-width: unset;
+        width: 98vw;
+        padding: 10px;
       }
+      .calendar {
+        grid-template-columns: repeat(7, 1fr);
+      }
+    }
+    @media (max-width: 900px) {
       .section-content {
-        padding: 32px 24px;
-        margin: 10px;
+        flex-direction: column;
       }
-      .section-title {
-        font-size: 2em;
+      .section-left {
+        max-width: 98vw;
+        min-width: unset;
+        margin: 24px auto;
+        border-radius: 18px;
+        padding: 24px 8vw;
       }
+      .section-right {
+        border-bottom: none;
+      }
+    }
+    /* SVG/emoji creative backgrounds */
+    .tasks-mascot {
+      font-size: 3.5em;
+      margin-top: 60px;
+      animation: mascot-bounce 1.2s infinite alternate;
+      filter: drop-shadow(0 4px 12px #f9d42355);
+    }
+    @keyframes mascot-bounce {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-18px) scale(1.08); }
+    }
+    .tasks-motivation {
+      font-size: 1.2em;
+      color: #fff;
+      margin-top: 24px;
+      text-align: center;
+      font-style: italic;
+      min-height: 2em;
+      text-shadow: 0 2px 8px #0008;
+    }
+    .progress-bar-emoji {
+      font-size: 2em;
+      margin-top: 10px;
+      text-align: center;
+      transition: opacity 0.3s;
+      color: #fff;
+      text-shadow: 0 2px 8px #0008;
+    }
+    .achieve-trophy {
+      font-size: 3.5em;
+      margin-top: 60px;
+      filter: drop-shadow(0 4px 12px #b2ff5955);
+      transition: transform 0.3s;
+    }
+    .achieve-trophy.shine {
+      animation: trophy-shine 1.2s 1;
+    }
+    @keyframes trophy-shine {
+      0% { transform: scale(1) rotate(0deg); }
+      30% { transform: scale(1.2) rotate(-10deg); }
+      60% { transform: scale(1.1) rotate(10deg); }
+      100% { transform: scale(1) rotate(0deg); }
+    }
+    .achieve-streak {
+      font-size: 1.2em;
+      color: #43a047;
+      margin-top: 24px;
+      text-align: center;
+      font-weight: bold;
+      min-height: 2em;
+    }
+    input, textarea, select {
+      background: #f7faff !important;
+      color: #222 !important;
+      border: 1.5px solid #bbb !important;
+    }
+    input::placeholder, textarea::placeholder {
+      color: #888 !important;
+      opacity: 1;
     }
   </style>
 </head>
 <body>
-  <!-- Background Shapes -->
-  <svg class="bg-shape bg-shape1" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-    <path fill="#4f8cff" d="M45.3,-63.3C59.9,-52.8,73.5,-39.8,79.8,-24.8C86.1,-9.8,85.1,7.2,83.1,23.5C81.1,39.8,78.1,55.4,68.9,65.8C59.7,76.2,44.3,81.4,29.2,85.8C14.1,90.2,-0.8,93.8,-15.7,91.4C-30.6,89,-45.5,80.6,-56.8,69.2C-68.1,57.8,-75.8,43.4,-79.8,28.2C-83.8,13,-84.1,-3,-82.8,-18.8C-81.5,-34.6,-78.6,-49.2,-70.8,-59.2C-63,-69.2,-50.3,-74.6,-37.1,-79.8C-23.9,-85,-11.9,-90,-0.3,-89.6C11.3,-89.2,22.6,-83.4,30.7,-75.8C38.8,-68.2,43.7,-58.8,45.3,-63.3Z" transform="translate(100 100)" />
-  </svg>
-  <svg class="bg-shape bg-shape2" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-    <path fill="#7c5fe6" d="M42.8,-58.9C56.9,-48.9,70.8,-36.9,76.8,-22.8C82.8,-8.7,80.9,7.5,78.5,23.1C76.1,38.7,73.2,53.7,65.1,65.2C57,76.7,43.7,84.7,29.2,89.2C14.7,93.7,-1,93.7,-16.7,91.7C-32.4,89.7,-48.1,85.7,-59.8,76.2C-71.5,66.7,-79.2,51.7,-83.8,36.2C-88.4,20.7,-89.9,4.7,-88.9,-10.8C-87.9,-26.3,-84.4,-41.3,-77.1,-53.3C-69.8,-65.3,-58.7,-74.3,-45.8,-80.3C-32.9,-86.3,-18.2,-89.3,-4.6,-83.7C9,-78.1,18,-64,28.8,-52.8C39.6,-41.6,52.2,-33.3,42.8,-58.9Z" transform="translate(100 100)" />
-  </svg>
+  <!-- SVG Background Shapes -->
+  <svg class="bg-shape bg-shape1" viewBox="0 0 400 400"><circle cx="200" cy="200" r="200" fill="#a084ee" /></svg>
+  <svg class="bg-shape bg-shape2" viewBox="0 0 300 300"><ellipse cx="150" cy="150" rx="150" ry="120" fill="#fbc2eb" /></svg>
 
-  <!-- Login Page -->
-  <div id="auth-page">
-    <div class="auth-box">
-      <div id="auth-error" class="auth-error" style="display: none;"></div>
+  <!-- Auth Page -->
+  <div id="auth-page" style="display:flex;">
+    <div class="auth-box" id="login-box">
+      <h2>Login</h2>
       <form id="login-form">
-        <div>
-          <label for="email">Email:</label>
-          <input type="email" id="email" required>
-        </div>
-        <div>
-          <label for="password">Password:</label>
-          <input type="password" id="password" required>
-        </div>
+        <input type="text" id="login-email" placeholder="Email or Phone" required>
+        <input type="password" id="login-password" placeholder="Password" required>
         <input type="submit" value="Login" class="login-btn">
       </form>
-      <button class="auth-link" onclick="showSignup()">Don't have an account? Sign up here</button>
+      <button class="auth-link" id="show-signup">Don't have an account? Sign Up</button>
+      <div id="login-error" class="auth-error"></div>
+    </div>
+    <div class="auth-box" id="signup-box" style="display:none;">
+      <h2>Sign Up</h2>
+      <form id="signup-form">
+        <input type="text" id="signup-name" placeholder="Full Name" required>
+        <input type="tel" id="signup-phone" placeholder="Phone Number" required>
+        <input type="date" id="signup-dob" placeholder="Date of Birth" required>
+        <input type="email" id="signup-email" placeholder="Email" required>
+        <input type="password" id="signup-password" placeholder="Password" required>
+        <input type="submit" value="Sign Up" class="signup-btn">
+      </form>
+      <button class="auth-link" id="show-login">Already have an account? Login</button>
+      <div id="signup-error" class="auth-error"></div>
     </div>
   </div>
 
   <!-- Dashboard Page -->
-  <div id="dashboard-page" style="display: none;">
-    <button class="logout-btn" onclick="logout()">Logout</button>
-    <h1 style="font-size: 3em; color: #4f8cff; margin-bottom: 20px; text-align: center;">Welcome to EduAgenda</h1>
+  <div id="dashboard-page" style="display:none;">
+    <button class="logout-btn" id="logout-btn">Logout</button>
+    <h2 style="margin-top:60px; color:#7c5fe6; text-align:center;">Welcome! What do you want to do?</h2>
     <div class="dashboard-cards">
-      <div class="dashboard-card" onclick="showSection('todos')">
-        📝 Todo List
+      <div class="dashboard-card" id="card-schedule">Schedules</div>
+      <div class="dashboard-card" id="card-todo">Tasks</div>
+      <div class="dashboard-card" id="card-completed">Achievements</div>
+    </div>
+  </div>
+
+  <!-- Scheduling Section -->
+  <div id="section-schedule" class="section-page" style="display:none;">
+    <button class="logout-btn" id="logout-btn2">Logout</button>
+    <div class="section-content">
+      <div class="section-left">
+        <!-- Schedule Form View -->
+        <div id="schedule-form-view">
+          <div class="calendar-anim">🗓️ Schedules</div>
+          <div style="display:flex;justify-content:flex-end;margin-bottom:15px;">
+            <button id="schedule-history-btn" style="padding:8px 16px;background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);color:white;border:none;border-radius:20px;font-size:0.8em;cursor:pointer;width:80px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;box-shadow:0 4px 15px rgba(102,126,234,0.3);transition:all 0.3s ease;">HISTORY</button>
+          </div>
+          <div class="motivation" id="motivation-quote"></div>
+          <form id="event-form">
+            <input type="text" id="event-title" placeholder="Event Title" required>
+            <input type="time" id="event-time" required>
+            <input type="submit" value="Add Event">
+          </form>
+          <h3 id="selected-date-title"></h3>
+          <ul class="event-list" id="event-list"></ul>
+          <button style="margin-top:18px;" onclick="showDashboard()">Back to Dashboard</button>
+        </div>
+        
+        <!-- Schedule History View -->
+        <div id="schedule-history-view" style="display:none;">
+          <div style="font-size:2.2em;font-weight:800;color:#7c5fe6;margin-bottom:10px;">📚 Schedule History</div>
+          <div style="display:flex;justify-content:flex-end;margin-bottom:15px;">
+            <button id="schedule-back-btn" style="padding:8px 16px;background:linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);color:white;border:none;border-radius:20px;font-size:0.8em;cursor:pointer;width:80px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;box-shadow:0 4px 15px rgba(255,107,107,0.3);transition:all 0.3s ease;">BACK</button>
+          </div>
+          
+          <!-- Search and Filter -->
+          <div style="margin-bottom:15px;">
+            <input type="text" id="schedule-history-search" placeholder="Search events..." style="width:60%;margin-right:10px;">
+            <select id="schedule-history-filter" style="width:35%;">
+              <option value="all">All Time</option>
+              <option value="today">Today</option>
+              <option value="week">This Week</option>
+              <option value="month">This Month</option>
+              <option value="year">This Year</option>
+            </select>
+          </div>
+          
+          <!-- Schedule History List -->
+          <div id="schedule-history-list" style="max-height:400px;overflow-y:auto;border:1px solid #ddd;border-radius:8px;padding:10px;background:#f9f9f9;"></div>
+          
+          <!-- Schedule History Stats -->
+          <div id="schedule-history-stats" style="margin-top:15px;font-size:0.9em;color:#666;"></div>
+          
+          <button style="margin-top:18px;" onclick="showDashboard()">Back to Dashboard</button>
+        </div>
       </div>
-      <div class="dashboard-card" onclick="showSection('events')">
-        📅 Events
-      </div>
-      <div class="dashboard-card" onclick="showSection('achievements')">
-        🏆 Achievements
+      <div class="section-right">
+        <div class="calendar-controls" style="margin-bottom:18px; position:relative; z-index:1;">
+          <button id="prev-month">&#8592;</button>
+          <span id="calendar-month"></span>
+          <button id="next-month">&#8594;</button>
+        </div>
+        <div class="calendar" id="calendar" style="position:relative; z-index:1;"></div>
       </div>
     </div>
   </div>
 
-  <!-- Todo Section -->
-  <div id="todos-section" class="section-page" style="display: none;">
-    <button class="back-btn" onclick="showDashboard()">← Back</button>
+  <!-- To-Do Section -->
+  <div id="section-todo" class="section-page" style="display:none;">
+    <button class="logout-btn" id="logout-btn3">Logout</button>
     <div class="section-content">
-      <h2 class="section-title">Todo List</h2>
-      <form id="todo-form">
-        <input type="text" id="todo-input" placeholder="Add a new todo..." required>
-        <input type="date" id="todo-date" required>
-        <input type="time" id="todo-time" required>
-        <button type="submit" class="login-btn">Add Todo</button>
-      </form>
-      <ul id="todo-list" style="list-style: none; padding: 0; margin-top: 20px;"></ul>
+      <div class="section-left">
+        <!-- Todo Form View -->
+        <div id="todo-form-view">
+          <div style="font-size:2.2em;font-weight:800;color:#7c5fe6;margin-bottom:10px;">📝 Tasks</div>
+          <div style="display:flex;justify-content:flex-end;margin-bottom:15px;">
+            <button id="todo-history-btn" style="padding:8px 16px;background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);color:white;border:none;border-radius:20px;font-size:0.8em;cursor:pointer;width:80px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;box-shadow:0 4px 15px rgba(102,126,234,0.3);transition:all 0.3s ease;">HISTORY</button>
+          </div>
+          <form id="todo-form">
+            <input type="text" id="todo-input" placeholder="New task..." required>
+            <input type="date" id="todo-date" required>
+            <input type="time" id="todo-time" required>
+            <input type="submit" value="Add">
+          </form>
+          <ul class="todo-list" id="todo-list"></ul>
+          <button style="margin-top:18px;" onclick="showDashboard()">Back to Dashboard</button>
+        </div>
+        
+        <!-- Todo History View -->
+        <div id="todo-history-view" style="display:none;">
+          <div style="font-size:2.2em;font-weight:800;color:#7c5fe6;margin-bottom:10px;">📚 Task History</div>
+          <div style="display:flex;justify-content:flex-end;margin-bottom:15px;">
+            <button id="todo-back-btn" style="padding:8px 16px;background:linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);color:white;border:none;border-radius:20px;font-size:0.8em;cursor:pointer;width:80px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;box-shadow:0 4px 15px rgba(255,107,107,0.3);transition:all 0.3s ease;">BACK</button>
+          </div>
+          
+          <!-- Search and Filter -->
+          <div style="margin-bottom:15px;">
+            <input type="text" id="todo-history-search" placeholder="Search tasks..." style="width:60%;margin-right:10px;">
+            <select id="todo-history-filter" style="width:35%;">
+              <option value="all">All Time</option>
+              <option value="today">Today</option>
+              <option value="week">This Week</option>
+              <option value="month">This Month</option>
+              <option value="year">This Year</option>
+            </select>
+          </div>
+          
+          <!-- Todo History List -->
+          <div id="todo-history-list" style="max-height:400px;overflow-y:auto;border:1px solid #ddd;border-radius:8px;padding:10px;background:#f9f9f9;"></div>
+          
+          <!-- Todo History Stats -->
+          <div id="todo-history-stats" style="margin-top:15px;font-size:0.9em;color:#666;"></div>
+          
+          <button style="margin-top:18px;" onclick="showDashboard()">Back to Dashboard</button>
+        </div>
+      </div>
+      <div class="section-right">
+        <div class="progress-bar-bg" style="position:relative; z-index:1;"><div class="progress-bar-fill" id="todo-progress"></div></div>
+        <div class="progress-bar-emoji" id="progress-emoji">⬜</div>
+        <div class="tasks-motivation" id="tasks-motivation"></div>
+      </div>
     </div>
   </div>
 
-  <!-- Events Section -->
-  <div id="events-section" class="section-page" style="display: none;">
-    <button class="back-btn" onclick="showDashboard()">← Back</button>
+  <!-- Completed Section -->
+  <div id="section-completed" class="section-page" style="display:none;">
+    <button class="logout-btn" id="logout-btn4">Logout</button>
     <div class="section-content">
-      <h2 class="section-title">Events</h2>
-      <form id="event-form">
-        <input type="text" id="event-title" placeholder="Event title..." required>
-        <input type="datetime-local" id="event-date" required>
-        <button type="submit" class="login-btn">Add Event</button>
-      </form>
-      <ul id="event-list" style="list-style: none; padding: 0; margin-top: 20px;"></ul>
+      <div class="section-left">
+        <!-- Achievements Form View -->
+        <div id="achievements-form-view">
+          <div style="font-size:2.2em;font-weight:800;color:#7c5fe6;margin-bottom:10px;">🏆 Achievements</div>
+          <div style="display:flex;justify-content:flex-end;margin-bottom:15px;">
+            <button id="history-btn" style="padding:8px 16px;background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);color:white;border:none;border-radius:20px;font-size:0.8em;cursor:pointer;width:80px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;box-shadow:0 4px 15px rgba(102,126,234,0.3);transition:all 0.3s ease;">HISTORY</button>
+          </div>
+          <form id="completed-form">
+            <input type="text" id="completed-input" placeholder="What have you done?" required>
+            <input type="date" id="completed-date" required>
+            <input type="submit" value="Add">
+          </form>
+          <ul class="done-list" id="done-list"></ul>
+          <button style="margin-top:18px;" onclick="showDashboard()">Back to Dashboard</button>
+        </div>
+        
+        <!-- History View -->
+        <div id="history-view" style="display:none;">
+          <div style="font-size:2.2em;font-weight:800;color:#7c5fe6;margin-bottom:10px;">📚 Achievement History</div>
+          <div style="display:flex;justify-content:flex-end;margin-bottom:15px;">
+            <button id="back-btn" style="padding:8px 16px;background:linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);color:white;border:none;border-radius:20px;font-size:0.8em;cursor:pointer;width:80px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;box-shadow:0 4px 15px rgba(255,107,107,0.3);transition:all 0.3s ease;">BACK</button>
+          </div>
+          
+          <!-- Search and Filter -->
+          <div style="margin-bottom:15px;">
+            <input type="text" id="history-search" placeholder="Search achievements..." style="width:60%;margin-right:10px;">
+            <select id="history-filter" style="width:35%;">
+              <option value="all">All Time</option>
+              <option value="today">Today</option>
+              <option value="week">This Week</option>
+              <option value="month">This Month</option>
+              <option value="year">This Year</option>
+            </select>
+          </div>
+          
+          <!-- History List -->
+          <div id="history-list" style="max-height:400px;overflow-y:auto;border:1px solid #ddd;border-radius:8px;padding:10px;background:#f9f9f9;"></div>
+          
+          <!-- History Stats -->
+          <div id="history-stats" style="margin-top:15px;font-size:0.9em;color:#666;"></div>
+          
+          <button style="margin-top:18px;" onclick="showDashboard()">Back to Dashboard</button>
+        </div>
+      </div>
+      <div class="section-right">
+        <div class="achieve-trophy" id="achieve-trophy">🏆</div>
+        <div class="achieve-streak" id="achieve-streak"></div>
+        <div style="font-size:1.2em;color:#7c5fe6;margin-top:18px;text-align:center;">Celebrate your wins!</div>
+      </div>
     </div>
-  </div>
-
-  <!-- Achievements Section -->
-  <div id="achievements-section" class="section-page" style="display: none;">
-    <button class="back-btn" onclick="showDashboard()">← Back</button>
-    <div class="section-content">
-      <h2 class="section-title">Achievements</h2>
-      <form id="achievement-form">
-        <input type="text" id="achievement-title" placeholder="Achievement title..." required>
-        <input type="text" id="achievement-description" placeholder="Description..." required>
-        <input type="date" id="achievement-date" required>
-        <button type="submit" class="login-btn">Add Achievement</button>
-      </form>
-      <ul id="achievement-list" style="list-style: none; padding: 0; margin-top: 20px;"></ul>
-    </div>
+    <canvas class="confetti" id="confetti-canvas" style="display:none;"></canvas>
   </div>
 
   <script>
-    // Data persistence functions
-    function saveTodos(todos) {
-      localStorage.setItem('todos', JSON.stringify(todos));
-    }
+    // --- Auth Logic ---
+    const authPage = document.getElementById('auth-page');
+    const loginBox = document.getElementById('login-box');
+    const signupBox = document.getElementById('signup-box');
+    const showSignup = document.getElementById('show-signup');
+    const showLogin = document.getElementById('show-login');
+    const loginForm = document.getElementById('login-form');
+    const signupForm = document.getElementById('signup-form');
+    const loginError = document.getElementById('login-error');
+    const signupError = document.getElementById('signup-error');
+    const dashboardPage = document.getElementById('dashboard-page');
+    const logoutBtn = document.getElementById('logout-btn');
+    const logoutBtn2 = document.getElementById('logout-btn2');
+    const logoutBtn3 = document.getElementById('logout-btn3');
+    const logoutBtn4 = document.getElementById('logout-btn4');
 
-    function getTodos() {
-      const todos = localStorage.getItem('todos');
-      return todos ? JSON.parse(todos) : [];
-    }
+    // Always show login/signup on load
+    authPage.style.display = 'flex';
+    dashboardPage.style.display = 'none';
+    document.getElementById('section-schedule').style.display = 'none';
+    document.getElementById('section-todo').style.display = 'none';
+    document.getElementById('section-completed').style.display = 'none';
+    localStorage.removeItem('currentUser');
 
-    function saveEvents(events) {
-      localStorage.setItem('events', JSON.stringify(events));
-    }
-
-    function getEvents() {
-      const events = localStorage.getItem('events');
-      return events ? JSON.parse(events) : [];
-    }
-
-    function saveAchievements(achievements) {
-      localStorage.setItem('achievements', JSON.stringify(achievements));
-    }
-
-    function getAchievements() {
-      const achievements = localStorage.getItem('achievements');
-      return achievements ? JSON.parse(achievements) : [];
-    }
-
-    // Simple authentication (for demo purposes)
-    let isLoggedIn = false;
-
-    document.getElementById('login-form').addEventListener('submit', function(e) {
-      e.preventDefault();
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-      
-      // Simple validation
-      if (email && password) {
-        isLoggedIn = true;
-        showDashboard();
-        loadAllData(); // Load saved data
-      } else {
-        showError('Please fill in all fields');
+    // Add motivational quotes for login
+    const loginQuotes = [
+      "Welcome back! Let's make today productive.",
+      "Every day is a fresh start. Log in and shine!",
+      "Your journey to success continues here.",
+      "Believe in yourself. You can do it!",
+      "Small steps every day lead to big achievements.",
+      "Ready to conquer your goals? Log in!"
+    ];
+    function showLoginQuote() {
+      const loginQuote = document.getElementById('login-quote');
+      if (loginQuote) {
+        loginQuote.textContent = loginQuotes[Math.floor(Math.random() * loginQuotes.length)];
       }
+    }
+    // Show a random quote on login box load
+    showLoginQuote();
+    // Also show a new quote when switching to login
+    showLogin.onclick = () => {
+      signupBox.style.display = 'none';
+      loginBox.style.display = '';
+      loginError.textContent = '';
+      signupError.textContent = '';
+      showLoginQuote();
+    };
+
+    // Store users in localStorage (for demo only)
+    function getUsers() {
+      return JSON.parse(localStorage.getItem('users') || '{}');
+    }
+    function setUsers(users) {
+      localStorage.setItem('users', JSON.stringify(users));
+    }
+    function setCurrentUser(email) {
+      localStorage.setItem('currentUser', email);
+    }
+    function getCurrentUser() {
+      return localStorage.getItem('currentUser');
+    }
+    function getUserProfile(email) {
+      const users = getUsers();
+      return users[email] || null;
+    }
+
+    signupForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name = document.getElementById('signup-name').value.trim();
+      const phone = document.getElementById('signup-phone').value.trim();
+      const dob = document.getElementById('signup-dob').value;
+      const email = document.getElementById('signup-email').value.trim();
+      const password = document.getElementById('signup-password').value;
+      if (!name || !phone || !dob || !email || !password) return;
+      let users = getUsers();
+      if (users[email]) {
+        signupError.textContent = 'User already exists. Please login.';
+        return;
+      }
+      users[email] = { name, phone, dob, email, password };
+      setUsers(users);
+      setCurrentUser(email);
+      showDashboard();
     });
 
-    function showError(message) {
-      const errorDiv = document.getElementById('auth-error');
-      errorDiv.textContent = message;
-      errorDiv.style.display = 'block';
-    }
+    loginForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+      if (!email || !password) return;
+      let users = getUsers();
+      if (!users[email] || users[email].password !== password) {
+        loginError.textContent = 'Invalid credentials.';
+        return;
+      }
+      setCurrentUser(email);
+      showDashboard();
+    });
 
     function showDashboard() {
-      document.getElementById('auth-page').style.display = 'none';
-      document.getElementById('dashboard-page').style.display = 'flex';
-      hideAllSections();
+      authPage.style.display = 'none';
+      dashboardPage.style.display = 'flex';
+      document.getElementById('section-schedule').style.display = 'none';
+      document.getElementById('section-todo').style.display = 'none';
+      document.getElementById('section-completed').style.display = 'none';
     }
 
-    function showSection(section) {
-      hideAllSections();
-      document.getElementById(section + '-section').style.display = 'flex';
-      renderSection(section);
-    }
-
-    function hideAllSections() {
-      document.getElementById('todos-section').style.display = 'none';
-      document.getElementById('events-section').style.display = 'none';
-      document.getElementById('achievements-section').style.display = 'none';
-    }
-
-    function logout() {
-      isLoggedIn = false;
-      document.getElementById('dashboard-page').style.display = 'none';
-      document.getElementById('auth-page').style.display = 'flex';
-      document.getElementById('login-form').reset();
-    }
-
-    function showSignup() {
-      // For demo purposes, just show login
-      alert('Signup functionality would be implemented here');
-    }
-
-    // Load all saved data
-    function loadAllData() {
-      // Check if this is the first time loading (no data exists)
-      const todos = getTodos();
-      const events = getEvents();
-      const achievements = getAchievements();
-      
-      // If no data exists, add some sample data to help recover your work
-      if (todos.length === 0 && events.length === 0 && achievements.length === 0) {
-        // Add sample todos
-        const sampleTodos = [
-          {
-            text: "Complete project report",
-            date: "2024-01-15",
-            time: "14:00",
-            completed: false,
-            createdAt: new Date().toISOString()
-          },
-          {
-            text: "Study for math exam",
-            date: "2024-01-16",
-            time: "10:00",
-            completed: false,
-            createdAt: new Date().toISOString()
-          },
-          {
-            text: "Submit assignment",
-            date: "2024-01-17",
-            time: "16:00",
-            completed: true,
-            createdAt: new Date().toISOString()
-          }
-        ];
-        
-        // Add sample events
-        const sampleEvents = [
-          {
-            title: "Team Meeting",
-            date: "2024-01-15T09:00",
-            createdAt: new Date().toISOString()
-          },
-          {
-            title: "Study Group",
-            date: "2024-01-16T15:00",
-            createdAt: new Date().toISOString()
-          },
-          {
-            title: "Presentation",
-            date: "2024-01-18T11:00",
-            createdAt: new Date().toISOString()
-          }
-        ];
-        
-        // Add sample achievements
-        const sampleAchievements = [
-          {
-            title: "Completed Course",
-            description: "Finished the web development course",
-            date: "2024-01-14",
-            createdAt: new Date().toISOString()
-          },
-          {
-            title: "Project Milestone",
-            description: "Reached 50% completion on the main project",
-            date: "2024-01-13",
-            createdAt: new Date().toISOString()
-          },
-          {
-            title: "Exam Success",
-            description: "Scored 95% on the final exam",
-            date: "2024-01-12",
-            createdAt: new Date().toISOString()
-          }
-        ];
-        
-        // Save sample data
-        saveTodos(sampleTodos);
-        saveEvents(sampleEvents);
-        saveAchievements(sampleAchievements);
-      }
-      
-      renderTodos();
-      renderEvents();
-      renderAchievements();
-    }
-
-    // Todo functionality with persistence
-    document.getElementById('todo-form').addEventListener('submit', function(e) {
-      e.preventDefault();
-      const input = document.getElementById('todo-input');
-      const date = document.getElementById('todo-date');
-      const time = document.getElementById('todo-time');
-      
-      const todo = {
-        text: input.value,
-        date: date.value,
-        time: time.value,
-        completed: false,
-        createdAt: new Date().toISOString()
+    // Logout logic (all pages)
+    [logoutBtn, logoutBtn2, logoutBtn3, logoutBtn4].forEach(btn => {
+      btn.onclick = function() {
+        localStorage.removeItem('currentUser');
+        authPage.style.display = 'flex';
+        dashboardPage.style.display = 'none';
+        document.getElementById('section-schedule').style.display = 'none';
+        document.getElementById('section-todo').style.display = 'none';
+        document.getElementById('section-completed').style.display = 'none';
+        loginBox.style.display = '';
+        signupBox.style.display = 'none';
+        loginError.textContent = '';
+        signupError.textContent = '';
+        // Clear login and signup form fields
+        document.getElementById('login-email').value = '';
+        document.getElementById('login-password').value = '';
+        document.getElementById('signup-name').value = '';
+        document.getElementById('signup-phone').value = '';
+        document.getElementById('signup-dob').value = '';
+        document.getElementById('signup-email').value = '';
+        document.getElementById('signup-password').value = '';
       };
-      
-      if (todo.text && todo.date && todo.time) {
-        addTodo(todo);
-        input.value = '';
-        date.value = '';
-        time.value = '';
-      }
     });
 
-    function addTodo(todo) {
-      const todos = getTodos();
-      todos.push(todo);
-      saveTodos(todos);
+    // --- Dashboard Navigation ---
+    document.getElementById('card-schedule').onclick = function() {
+      dashboardPage.style.display = 'none';
+      document.getElementById('section-schedule').style.display = 'flex';
+      renderCalendar();
+      renderAllEventsList();
+      showMotivation();
+    };
+    document.getElementById('card-todo').onclick = function() {
+      dashboardPage.style.display = 'none';
+      document.getElementById('section-todo').style.display = 'flex';
       renderTodos();
+      updateTodoProgress();
+    };
+    document.getElementById('card-completed').onclick = function() {
+      dashboardPage.style.display = 'none';
+      document.getElementById('section-completed').style.display = 'flex';
+      renderCompleted();
+    };
+    window.showDashboard = showDashboard;
+
+    // --- Scheduling Logic ---
+    const calendar = document.getElementById('calendar');
+    const calendarMonth = document.getElementById('calendar-month');
+    const prevMonthBtn = document.getElementById('prev-month');
+    const nextMonthBtn = document.getElementById('next-month');
+    const eventForm = document.getElementById('event-form');
+    const eventTitleInput = document.getElementById('event-title');
+    const eventTimeInput = document.getElementById('event-time');
+    const eventList = document.getElementById('event-list');
+    const selectedDateTitle = document.getElementById('selected-date-title');
+    const motivationQuote = document.getElementById('motivation-quote');
+
+    let today = new Date();
+    let currentMonth = today.getMonth();
+    let currentYear = today.getFullYear();
+    let selectedDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
+    function getEvents() {
+      const user = getCurrentUser();
+      if (!user) return {};
+      return JSON.parse(localStorage.getItem('events_' + user) || '{}');
+    }
+    function setEvents(events) {
+      const user = getCurrentUser();
+      if (!user) return;
+      localStorage.setItem('events_' + user, JSON.stringify(events));
     }
 
-    function renderTodos() {
-      const todos = getTodos();
-      const list = document.getElementById('todo-list');
-      list.innerHTML = '';
+    // Helper to get local date string in YYYY-MM-DD
+    function getLocalDateStr(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+
+    function renderCalendar() {
+      calendar.innerHTML = '';
+      const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      calendarMonth.textContent = monthNames[currentMonth] + ' ' + currentYear;
+      const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      days.forEach(day => {
+        const header = document.createElement('div');
+        header.textContent = day;
+        header.className = 'calendar-header';
+        calendar.appendChild(header);
+      });
+      const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+      const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+      const events = getEvents();
+      for (let i = 0; i < firstDay; i++) {
+        const empty = document.createElement('div');
+        calendar.appendChild(empty);
+      }
+      for (let d = 1; d <= daysInMonth; d++) {
+        const date = new Date(currentYear, currentMonth, d);
+        const dateStr = getLocalDateStr(date);
+        const btn = document.createElement('button');
+        btn.className = 'calendar-day';
+        btn.textContent = d;
+        if (dateStr === getLocalDateStr(selectedDate)) {
+          btn.classList.add('selected');
+        }
+        if (events[dateStr] && events[dateStr].length > 0) {
+          btn.classList.add('has-event');
+        }
+        btn.onclick = () => {
+          selectedDate = new Date(currentYear, currentMonth, d);
+          renderCalendar();
+          renderAllEventsList();
+        };
+        calendar.appendChild(btn);
+      }
+    }
+
+    prevMonthBtn.onclick = () => {
+      currentMonth--;
+      if (currentMonth < 0) {
+        currentMonth = 11;
+        currentYear--;
+      }
+      renderCalendar();
+      renderAllEventsList();
+    };
+    nextMonthBtn.onclick = () => {
+      currentMonth++;
+      if (currentMonth > 11) {
+        currentMonth = 0;
+        currentYear++;
+      }
+      renderCalendar();
+      renderAllEventsList();
+    };
+
+    eventForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const title = eventTitleInput.value.trim();
+      const time = eventTimeInput.value;
+      if (!title || !time) return;
+      const dateStr = getLocalDateStr(selectedDate);
+      let events = getEvents();
+      if (!events[dateStr]) events[dateStr] = [];
+      events[dateStr].push({ title, time });
+      setEvents(events);
+      eventForm.reset();
+      renderCalendar();
+      renderAllEventsList();
+    });
+
+    function renderAllEventsList() {
+      const events = getEvents();
+      eventList.innerHTML = '';
+      const dates = Object.keys(events).sort();
+      if (dates.length === 0) {
+        eventList.innerHTML = '<li style="color:#888;">No events scheduled.</li>';
+        selectedDateTitle.textContent = 'All Scheduled Events';
+        return;
+      }
+      selectedDateTitle.textContent = 'All Scheduled Events';
+      dates.forEach(dateStr => {
+        const dateHeader = document.createElement('li');
+        dateHeader.style = 'font-weight:bold;color:#7c5fe6;margin-top:10px;';
+        dateHeader.textContent = dateStr;
+        eventList.appendChild(dateHeader);
+        events[dateStr].forEach((ev, idx) => {
+          const li = document.createElement('li');
+          li.className = 'event-item';
+          li.innerHTML = `<span>${ev.title} <small>(${ev.time})</small></span> <button onclick="removeEvent('${dateStr}',${idx})">Remove</button>`;
+          eventList.appendChild(li);
+        });
+      });
+    }
+    // Function to get event history (deleted events)
+    function getEventHistory() {
+      const user = getCurrentUser();
+      if (!user) return [];
+      return JSON.parse(localStorage.getItem('eventHistory_' + user) || '[]');
+    }
+    
+    // Function to set event history
+    function setEventHistory(history) {
+      const user = getCurrentUser();
+      if (!user) return;
+      localStorage.setItem('eventHistory_' + user, JSON.stringify(history));
+    }
+
+    window.removeEvent = function(dateStr, idx) {
+      let events = getEvents();
+      const eventHistory = getEventHistory();
       
-      todos.forEach((todo, index) => {
+      if (events[dateStr]) {
+        // Move the event to history instead of deleting it
+        const removedEvent = events[dateStr][idx];
+        removedEvent.dateStr = dateStr; // Store the original date
+        removedEvent.removedAt = new Date().toISOString(); // Add removal timestamp
+        eventHistory.push(removedEvent);
+        
+        // Remove from events list
+        events[dateStr].splice(idx, 1);
+        if (events[dateStr].length === 0) delete events[dateStr];
+        
+        // Save both lists
+        setEvents(events);
+        setEventHistory(eventHistory);
+        
+        // Update displays
+        renderCalendar();
+        renderAllEventsList();
+      }
+    };
+
+    // --- Motivational Quotes for Scheduling ---
+    const quotes = [
+      "Success is the sum of small efforts, repeated day in and day out.",
+      "The secret of getting ahead is getting started.",
+      "Don't watch the clock; do what it does. Keep going!",
+      "A goal without a plan is just a wish.",
+      "Dream big. Start small. Act now.",
+      "Your future is created by what you do today, not tomorrow."
+    ];
+    function showMotivation() {
+      motivationQuote.textContent = quotes[Math.floor(Math.random() * quotes.length)];
+    }
+
+    // --- To-Do Logic with Progress Bar and Done Toggle ---
+    const todoForm = document.getElementById('todo-form');
+    const todoInput = document.getElementById('todo-input');
+    const todoList = document.getElementById('todo-list');
+    const todoProgress = document.getElementById('todo-progress');
+    const tasksMascot = document.getElementById('tasks-mascot');
+    const tasksMotivation = document.getElementById('tasks-motivation');
+    const progressEmoji = document.getElementById('progress-emoji');
+    const taskQuotes = [
+      "Every small step counts!",
+      "Keep going, you're doing great!",
+      "A finished task is a happy task!",
+      "Stay focused and check it off!",
+      "You got this!",
+      "Progress, not perfection."
+    ];
+    function getTodos() {
+      const user = getCurrentUser();
+      if (!user) return [];
+      return JSON.parse(localStorage.getItem('todos_' + user) || '[]');
+    }
+    function setTodos(todos) {
+      const user = getCurrentUser();
+      if (!user) return;
+      localStorage.setItem('todos_' + user, JSON.stringify(todos));
+    }
+    function renderTodos() {
+      let todos = getTodos();
+      todoList.innerHTML = '';
+      if (todos.length === 0) {
+        todoList.innerHTML = '<li style="color:#888;">No tasks yet.</li>';
+        updateTodoProgress();
+        updateTasksMotivation();
+        return;
+      }
+      todos.forEach((task, idx) => {
         const li = document.createElement('li');
+        li.className = 'todo-item';
+        li.innerHTML = `<input type="checkbox" class="todo-checkbox" ${task.done ? 'checked' : ''} onchange="toggleTodoDone(${idx})"> <span style="${task.done ? 'text-decoration:line-through;color:#aaa;' : ''}">${task.text}</span> <span style='font-size:0.95em;color:#7c5fe6;margin-left:8px;'>(on ${task.date} at ${task.time})</span> <button onclick="removeTodo(${idx})">Remove</button>`;
+        todoList.appendChild(li);
+      });
+      updateTodoProgress();
+      updateTasksMotivation();
+    }
+    const todoDate = document.getElementById('todo-date');
+    const todoTime = document.getElementById('todo-time');
+    todoForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const text = todoInput.value.trim();
+      const date = todoDate.value;
+      const time = todoTime.value;
+      if (text && date && time) {
+        let todos = getTodos();
+        todos.push({ text, date, time, done: false });
+        setTodos(todos);
+        todoInput.value = '';
+        todoDate.value = '';
+        todoTime.value = '';
+        renderTodos();
+      }
+    });
+    // Function to get todo history (deleted todos)
+    function getTodoHistory() {
+      const user = getCurrentUser();
+      if (!user) return [];
+      return JSON.parse(localStorage.getItem('todoHistory_' + user) || '[]');
+    }
+    
+    // Function to set todo history
+    function setTodoHistory(history) {
+      const user = getCurrentUser();
+      if (!user) return;
+      localStorage.setItem('todoHistory_' + user, JSON.stringify(history));
+    }
+
+    window.removeTodo = function(idx) {
+      let todos = getTodos();
+      const todoHistory = getTodoHistory();
+      
+      // Move the todo to history instead of deleting it
+      const removedTodo = todos[idx];
+      removedTodo.removedAt = new Date().toISOString(); // Add removal timestamp
+      todoHistory.push(removedTodo);
+      
+      // Remove from todos list
+      todos.splice(idx, 1);
+      
+      // Save both lists
+      setTodos(todos);
+      setTodoHistory(todoHistory);
+      
+      // Update displays
+      renderTodos();
+    };
+    window.toggleTodoDone = function(idx) {
+      let todos = getTodos();
+      todos[idx].done = !todos[idx].done;
+      setTodos(todos);
+      renderTodos();
+    };
+    function updateTodoProgress() {
+      let todos = getTodos();
+      if (todos.length === 0) {
+        todoProgress.style.width = '0%';
+        progressEmoji.textContent = '⬜';
+        return;
+      }
+      let doneCount = todos.filter(t => t.done).length;
+      let percent = Math.round((doneCount / todos.length) * 100);
+      todoProgress.style.width = percent + '%';
+      todoProgress.textContent = percent + '%';
+      // Emoji for progress
+      if (percent === 0) progressEmoji.textContent = '⬜';
+      else if (percent < 50) progressEmoji.textContent = '🟨';
+      else if (percent < 100) progressEmoji.textContent = '🟩';
+      else progressEmoji.textContent = '🌟';
+    }
+    function updateTasksMotivation() {
+      let todos = getTodos();
+      let doneCount = todos.filter(t => t.done).length;
+      if (todos.length === 0) {
+        tasksMotivation.textContent = "Add your first task!";
+      } else if (doneCount === todos.length && todos.length > 0) {
+        tasksMotivation.textContent = "All done! Amazing work! 🎉";
+      } else {
+        tasksMotivation.textContent = taskQuotes[Math.floor(Math.random() * taskQuotes.length)];
+      }
+    }
+
+    // --- Completed Logic with Confetti ---
+    const completedForm = document.getElementById('completed-form');
+    const completedInput = document.getElementById('completed-input');
+    const doneList = document.getElementById('done-list');
+    const confettiCanvas = document.getElementById('confetti-canvas');
+    const achieveTrophy = document.getElementById('achieve-trophy');
+    const achieveStreak = document.getElementById('achieve-streak');
+    let achieveStreakCount = 0;
+    function getCompleted() {
+      const user = getCurrentUser();
+      if (!user) return [];
+      return JSON.parse(localStorage.getItem('completed_' + user) || '[]');
+    }
+    function setCompleted(completed) {
+      const user = getCurrentUser();
+      if (!user) return;
+      localStorage.setItem('completed_' + user, JSON.stringify(completed));
+    }
+    function renderCompleted() {
+      const completed = getCompleted();
+      doneList.innerHTML = '';
+      completed.forEach((task, idx) => {
+        const li = document.createElement('li');
+        li.className = 'done-item';
+        li.innerHTML = `<span>${task.text} <span style='font-size:0.95em;color:#7c5fe6;'>(on ${task.date})</span></span> <button onclick="removeCompleted(${idx})">Remove</button>`;
+        doneList.appendChild(li);
+      });
+      if (completed.length === 0) {
+        doneList.innerHTML = '<li style="color:#888;">Nothing completed yet.</li>';
+      }
+    }
+    const completedDate = document.getElementById('completed-date');
+    completedForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const task = completedInput.value.trim();
+      const date = completedDate.value;
+      if (task && date) {
+        const completed = getCompleted();
+        completed.push({ text: task, date });
+        setCompleted(completed);
+        completedInput.value = '';
+        completedDate.value = '';
+        renderCompleted();
+        launchConfetti();
+        animateTrophy();
+        updateStreak();
+      }
+    });
+    // Function to get history (deleted achievements)
+    function getHistory() {
+      const user = getCurrentUser();
+      if (!user) return [];
+      return JSON.parse(localStorage.getItem('history_' + user) || '[]');
+    }
+    
+    // Function to set history
+    function setHistory(history) {
+      const user = getCurrentUser();
+      if (!user) return;
+      localStorage.setItem('history_' + user, JSON.stringify(history));
+    }
+
+    window.removeCompleted = function(idx) {
+      const completed = getCompleted();
+      const history = getHistory();
+      
+      // Move the achievement to history instead of deleting it
+      const removedAchievement = completed[idx];
+      removedAchievement.removedAt = new Date().toISOString(); // Add removal timestamp
+      history.push(removedAchievement);
+      
+      // Remove from completed list
+      completed.splice(idx, 1);
+      
+      // Save both lists
+      setCompleted(completed);
+      setHistory(history);
+      
+      // Update displays
+      renderCompleted();
+      if (historyView.style.display !== 'none') {
+        renderHistory();
+        updateHistoryStats();
+      }
+    };
+    function animateTrophy() {
+      achieveTrophy.classList.add('shine');
+      setTimeout(() => achieveTrophy.classList.remove('shine'), 1200);
+    }
+    function updateStreak() {
+      achieveStreakCount++;
+      if (achieveStreakCount > 1) {
+        achieveStreak.textContent = `🔥 Streak: ${achieveStreakCount} achievements in a row!`;
+      } else {
+        achieveStreak.textContent = '';
+      }
+    }
+
+    // --- Confetti Animation ---
+    function launchConfetti() {
+      const canvas = confettiCanvas;
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      canvas.style.display = 'block';
+      let confetti = [];
+      for (let i = 0; i < 120; i++) {
+        confetti.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * -canvas.height,
+          r: 6 + Math.random() * 8,
+          d: 4 + Math.random() * 6,
+          color: `hsl(${Math.random()*360},80%,70%)`,
+          tilt: Math.random() * 10 - 5
+        });
+      }
+      let frame = 0;
+      function draw() {
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        confetti.forEach(c => {
+          ctx.beginPath();
+          ctx.ellipse(c.x, c.y, c.r, c.r/2, c.tilt, 0, 2*Math.PI);
+          ctx.fillStyle = c.color;
+          ctx.fill();
+        });
+      }
+      function update() {
+        confetti.forEach(c => {
+          c.y += c.d;
+          c.x += Math.sin(frame/10 + c.tilt) * 2;
+          if (c.y > canvas.height) {
+            c.y = Math.random() * -canvas.height/2;
+            c.x = Math.random() * canvas.width;
+          }
+        });
+      }
+      function loop() {
+        draw();
+        update();
+        frame++;
+        if (frame < 80) {
+          requestAnimationFrame(loop);
+        } else {
+          canvas.style.display = 'none';
+        }
+      }
+      loop();
+    }
+
+    // --- Achievement History Functions ---
+    const historySearch = document.getElementById('history-search');
+    const historyFilter = document.getElementById('history-filter');
+    const historyList = document.getElementById('history-list');
+    const historyStats = document.getElementById('history-stats');
+
+    // Initialize history when achievements section is shown
+    function initializeHistory() {
+      renderHistory();
+      updateHistoryStats();
+    }
+
+    // Render history with search and filter
+    function renderHistory() {
+      const history = getHistory();
+      const searchTerm = historySearch.value.toLowerCase();
+      const filterValue = historyFilter.value;
+      
+      // Filter achievements
+      let filtered = history.filter(achievement => {
+        const matchesSearch = achievement.text.toLowerCase().includes(searchTerm);
+        const matchesFilter = filterByDate(achievement.date, filterValue);
+        return matchesSearch && matchesFilter;
+      });
+
+      // Sort by removal date (newest first)
+      filtered.sort((a, b) => new Date(b.removedAt || b.date) - new Date(a.removedAt || a.date));
+
+      // Render filtered achievements
+      historyList.innerHTML = '';
+      if (filtered.length === 0) {
+        historyList.innerHTML = '<div style="color:#888;text-align:center;padding:20px;">No deleted achievements found.</div>';
+        return;
+      }
+
+      filtered.forEach((achievement, idx) => {
+        const div = document.createElement('div');
+        div.style.cssText = 'padding:10px;margin:5px 0;background:white;border-radius:5px;border-left:4px solid #ff6b6b;box-shadow:0 1px 3px rgba(0,0,0,0.1);';
+        
+        const date = new Date(achievement.date);
+        const formattedDate = date.toLocaleDateString('en-US', { 
+          weekday: 'short', 
+          year: 'numeric', 
+          month: 'short', 
+          day: 'numeric' 
+        });
+        
+        const removedDate = achievement.removedAt ? new Date(achievement.removedAt) : null;
+        const formattedRemovedDate = removedDate ? removedDate.toLocaleDateString('en-US', { 
+          month: 'short', 
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        }) : '';
+        
+        div.innerHTML = `
+          <div style="font-weight:600;color:#333;">${achievement.text}</div>
+          <div style="font-size:0.85em;color:#7c5fe6;margin-top:3px;">📅 ${formattedDate}</div>
+          <div style="font-size:0.75em;color:#ff6b6b;margin-top:2px;">🗑️ Removed: ${formattedRemovedDate}</div>
+        `;
+        
+        historyList.appendChild(div);
+      });
+    }
+
+    // Filter achievements by date range
+    function filterByDate(achievementDate, filterType) {
+      const today = new Date();
+      const achievement = new Date(achievementDate);
+      
+      switch(filterType) {
+        case 'today':
+          return achievement.toDateString() === today.toDateString();
+        case 'week':
+          const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+          return achievement >= weekAgo;
+        case 'month':
+          const monthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+          return achievement >= monthAgo;
+        case 'year':
+          const yearAgo = new Date(today.getTime() - 365 * 24 * 60 * 60 * 1000);
+          return achievement >= yearAgo;
+        default:
+          return true; // 'all'
+      }
+    }
+
+    // Update history statistics
+    function updateHistoryStats() {
+      const history = getHistory();
+      const total = history.length;
+      
+      if (total === 0) {
+        historyStats.innerHTML = '<div style="color:#888;">No deleted achievements yet.</div>';
+        return;
+      }
+
+      const today = new Date();
+      const thisWeek = history.filter(a => {
+        const removedDate = new Date(a.removedAt || a.date);
+        const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+        return removedDate >= weekAgo;
+      }).length;
+
+      const thisMonth = history.filter(a => {
+        const removedDate = new Date(a.removedAt || a.date);
+        const monthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+        return removedDate >= monthAgo;
+      }).length;
+
+      historyStats.innerHTML = `
+        <div style="display:flex;justify-content:space-between;background:white;padding:10px;border-radius:5px;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
+          <div style="text-align:center;">
+            <div style="font-weight:600;color:#ff6b6b;">${total}</div>
+            <div style="font-size:0.8em;">Deleted</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-weight:600;color:#ff6b6b;">${thisWeek}</div>
+            <div style="font-size:0.8em;">This Week</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-weight:600;color:#ff6b6b;">${thisMonth}</div>
+            <div style="font-size:0.8em;">This Month</div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Add event listeners for search and filter
+    historySearch.addEventListener('input', renderHistory);
+    historyFilter.addEventListener('change', renderHistory);
+
+    // View switching functionality
+    const historyBtn = document.getElementById('history-btn');
+    const achievementsFormView = document.getElementById('achievements-form-view');
+    const historyView = document.getElementById('history-view');
+    const backBtn = document.getElementById('back-btn');
+
+    // Add hover effects to history button
+    historyBtn.addEventListener('mouseenter', function() {
+      this.style.transform = 'translateY(-2px)';
+      this.style.boxShadow = '0 6px 20px rgba(102,126,234,0.4)';
+    });
+    
+    historyBtn.addEventListener('mouseleave', function() {
+      this.style.transform = 'translateY(0)';
+      this.style.boxShadow = '0 4px 15px rgba(102,126,234,0.3)';
+    });
+
+    // Add hover effects to back button
+    backBtn.addEventListener('mouseenter', function() {
+      this.style.transform = 'translateY(-2px)';
+      this.style.boxShadow = '0 6px 20px rgba(255,107,107,0.4)';
+    });
+    
+    backBtn.addEventListener('mouseleave', function() {
+      this.style.transform = 'translateY(0)';
+      this.style.boxShadow = '0 4px 15px rgba(255,107,107,0.3)';
+    });
+
+    // History button functionality
+    historyBtn.addEventListener('click', function() {
+      achievementsFormView.style.display = 'none';
+      historyView.style.display = 'block';
+      renderHistory();
+      updateHistoryStats();
+    });
+
+    // Back button functionality
+    backBtn.addEventListener('click', function() {
+      historyView.style.display = 'none';
+      achievementsFormView.style.display = 'block';
+    });
+
+    // Update history when new achievement is added
+    const originalRenderCompleted = renderCompleted;
+    renderCompleted = function() {
+      originalRenderCompleted();
+      if (historyView.style.display !== 'none') {
+        renderHistory();
+        updateHistoryStats();
+      }
+    };
+
+    // --- Schedule History Functions ---
+    const scheduleHistoryBtn = document.getElementById('schedule-history-btn');
+    const scheduleFormView = document.getElementById('schedule-form-view');
+    const scheduleHistoryView = document.getElementById('schedule-history-view');
+    const scheduleBackBtn = document.getElementById('schedule-back-btn');
+    const scheduleHistorySearch = document.getElementById('schedule-history-search');
+    const scheduleHistoryFilter = document.getElementById('schedule-history-filter');
+    const scheduleHistoryList = document.getElementById('schedule-history-list');
+    const scheduleHistoryStats = document.getElementById('schedule-history-stats');
+
+    // Render schedule history
+    function renderScheduleHistory() {
+      const eventHistory = getEventHistory();
+      const searchTerm = scheduleHistorySearch.value.toLowerCase();
+      const filterValue = scheduleHistoryFilter.value;
+      
+      let filtered = eventHistory.filter(event => {
+        const matchesSearch = event.title.toLowerCase().includes(searchTerm);
+        const matchesFilter = filterByDate(event.dateStr, filterValue);
+        return matchesSearch && matchesFilter;
+      });
+
+      filtered.sort((a, b) => new Date(b.removedAt || b.dateStr) - new Date(a.removedAt || a.dateStr));
+
+      scheduleHistoryList.innerHTML = '';
+      if (filtered.length === 0) {
+        scheduleHistoryList.innerHTML = '<div style="color:#888;text-align:center;padding:20px;">No deleted events found.</div>';
+        return;
+      }
+
+      filtered.forEach((event, idx) => {
+        const div = document.createElement('div');
+        div.style.cssText = 'padding:10px;margin:5px 0;background:white;border-radius:5px;border-left:4px solid #ff6b6b;box-shadow:0 1px 3px rgba(0,0,0,0.1);';
+        
+        const removedDate = event.removedAt ? new Date(event.removedAt) : null;
+        const formattedRemovedDate = removedDate ? removedDate.toLocaleDateString('en-US', { 
+          month: 'short', 
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        }) : '';
+        
+        div.innerHTML = `
+          <div style="font-weight:600;color:#333;">${event.title}</div>
+          <div style="font-size:0.85em;color:#7c5fe6;margin-top:3px;">📅 ${event.dateStr} at ${event.time}</div>
+          <div style="font-size:0.75em;color:#ff6b6b;margin-top:2px;">🗑️ Removed: ${formattedRemovedDate}</div>
+        `;
+        
+        scheduleHistoryList.appendChild(div);
+      });
+    }
+
+    // Update schedule history statistics
+    function updateScheduleHistoryStats() {
+      const eventHistory = getEventHistory();
+      const total = eventHistory.length;
+      
+      if (total === 0) {
+        scheduleHistoryStats.innerHTML = '<div style="color:#888;">No deleted events yet.</div>';
+        return;
+      }
+
+      const today = new Date();
+      const thisWeek = eventHistory.filter(e => {
+        const removedDate = new Date(e.removedAt || e.dateStr);
+        const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+        return removedDate >= weekAgo;
+      }).length;
+
+      const thisMonth = eventHistory.filter(e => {
+        const removedDate = new Date(e.removedAt || e.dateStr);
+        const monthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+        return removedDate >= monthAgo;
+      }).length;
+
+      scheduleHistoryStats.innerHTML = `
+        <div style="display:flex;justify-content:space-between;background:white;padding:10px;border-radius:5px;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
+          <div style="text-align:center;">
+            <div style="font-weight:600;color:#ff6b6b;">${total}</div>
+            <div style="font-size:0.8em;">Deleted</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-weight:600;color:#ff6b6b;">${thisWeek}</div>
+            <div style="font-size:0.8em;">This Week</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-weight:600;color:#ff6b6b;">${thisMonth}</div>
+            <div style="font-size:0.8em;">This Month</div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Schedule history button functionality
+    scheduleHistoryBtn.addEventListener('click', function() {
+      scheduleFormView.style.display = 'none';
+      scheduleHistoryView.style.display = 'block';
+      renderScheduleHistory();
+      updateScheduleHistoryStats();
+    });
+
+    // Schedule back button functionality
+    scheduleBackBtn.addEventListener('click', function() {
+      scheduleHistoryView.style.display = 'none';
+      scheduleFormView.style.display = 'block';
+    });
+
+    // Add event listeners for schedule history search and filter
+    scheduleHistorySearch.addEventListener('input', renderScheduleHistory);
+    scheduleHistoryFilter.addEventListener('change', renderScheduleHistory);
+
+    // --- Todo History Functions ---
+    const todoHistoryBtn = document.getElementById('todo-history-btn');
+    const todoFormView = document.getElementById('todo-form-view');
+    const todoHistoryView = document.getElementById('todo-history-view');
+    const todoBackBtn = document.getElementById('todo-back-btn');
+    const todoHistorySearch = document.getElementById('todo-history-search');
+    const todoHistoryFilter = document.getElementById('todo-history-filter');
+    const todoHistoryList = document.getElementById('todo-history-list');
+    const todoHistoryStats = document.getElementById('todo-history-stats');
+
+    // Render todo history
+    function renderTodoHistory() {
+      const todoHistory = getTodoHistory();
+      const searchTerm = todoHistorySearch.value.toLowerCase();
+      const filterValue = todoHistoryFilter.value;
+      
+      let filtered = todoHistory.filter(todo => {
+        const matchesSearch = todo.text.toLowerCase().includes(searchTerm);
+        const matchesFilter = filterByDate(todo.date, filterValue);
+        return matchesSearch && matchesFilter;
+      });
+
+      filtered.sort((a, b) => new Date(b.removedAt || b.date) - new Date(a.removedAt || a.date));
+
+      todoHistoryList.innerHTML = '';
+      if (filtered.length === 0) {
+        todoHistoryList.innerHTML = '<div style="color:#888;text-align:center;padding:20px;">No deleted tasks found.</div>';
+        return;
+      }
+
+      filtered.forEach((todo, idx) => {
+        const div = document.createElement('div');
+        div.style.cssText = 'padding:10px;margin:5px 0;background:white;border-radius:5px;border-left:4px solid #ff6b6b;box-shadow:0 1px 3px rgba(0,0,0,0.1);';
+        
         const date = new Date(todo.date);
         const formattedDate = date.toLocaleDateString('en-US', { 
           weekday: 'short', 
@@ -547,166 +1680,89 @@
           day: 'numeric' 
         });
         
-        li.innerHTML = `
-          <div style="display: flex; align-items: center; gap: 10px; padding: 15px; background: #f5f5f5; margin: 8px 0; border-radius: 8px; border-left: 4px solid #4f8cff;">
-            <input type="checkbox" onchange="toggleTodo(${index})" ${todo.completed ? 'checked' : ''}>
-            <span style="${todo.completed ? 'text-decoration: line-through; color: #888;' : ''}">${todo.text}</span>
-            <span style="margin-left: auto; font-size: 0.9em; color: #7c5fe6;">📅 ${formattedDate} at ${todo.time}</span>
-            <button onclick="deleteTodo(${index})" style="margin-left: 10px; background: #ff4444; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">Delete</button>
-          </div>
-        `;
-        list.appendChild(li);
-      });
-    }
-
-    function toggleTodo(index) {
-      const todos = getTodos();
-      todos[index].completed = !todos[index].completed;
-      saveTodos(todos);
-      renderTodos();
-    }
-
-    function deleteTodo(index) {
-      const todos = getTodos();
-      todos.splice(index, 1);
-      saveTodos(todos);
-      renderTodos();
-    }
-
-    // Event functionality with persistence
-    document.getElementById('event-form').addEventListener('submit', function(e) {
-      e.preventDefault();
-      const title = document.getElementById('event-title').value;
-      const date = document.getElementById('event-date').value;
-      
-      const event = {
-        title: title,
-        date: date,
-        createdAt: new Date().toISOString()
-      };
-      
-      if (event.title && event.date) {
-        addEvent(event);
-        document.getElementById('event-form').reset();
-      }
-    });
-
-    function addEvent(event) {
-      const events = getEvents();
-      events.push(event);
-      saveEvents(events);
-      renderEvents();
-    }
-
-    function renderEvents() {
-      const events = getEvents();
-      const list = document.getElementById('event-list');
-      list.innerHTML = '';
-      
-      events.forEach((event, index) => {
-        const li = document.createElement('li');
-        const date = new Date(event.date);
-        const formattedDate = date.toLocaleString('en-US', { 
-          weekday: 'short', 
-          year: 'numeric', 
+        const removedDate = todo.removedAt ? new Date(todo.removedAt) : null;
+        const formattedRemovedDate = removedDate ? removedDate.toLocaleDateString('en-US', { 
           month: 'short', 
           day: 'numeric',
           hour: '2-digit',
           minute: '2-digit'
-        });
+        }) : '';
         
-        li.innerHTML = `
-          <div style="padding: 15px; background: #f5f5f5; margin: 8px 0; border-radius: 8px; border-left: 4px solid #7c5fe6;">
-            <strong style="color: #333;">${event.title}</strong><br>
-            <small style="color: #7c5fe6;">📅 ${formattedDate}</small>
-            <button onclick="deleteEvent(${index})" style="float: right; background: #ff4444; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">Delete</button>
-          </div>
+        div.innerHTML = `
+          <div style="font-weight:600;color:#333;">${todo.text}</div>
+          <div style="font-size:0.85em;color:#7c5fe6;margin-top:3px;">📅 ${formattedDate} at ${todo.time}</div>
+          <div style="font-size:0.75em;color:#ff6b6b;margin-top:2px;">🗑️ Removed: ${formattedRemovedDate}</div>
         `;
-        list.appendChild(li);
+        
+        todoHistoryList.appendChild(div);
       });
     }
 
-    function deleteEvent(index) {
-      const events = getEvents();
-      events.splice(index, 1);
-      saveEvents(events);
-      renderEvents();
+    // Update todo history statistics
+    function updateTodoHistoryStats() {
+      const todoHistory = getTodoHistory();
+      const total = todoHistory.length;
+      
+      if (total === 0) {
+        todoHistoryStats.innerHTML = '<div style="color:#888;">No deleted tasks yet.</div>';
+        return;
+      }
+
+      const today = new Date();
+      const thisWeek = todoHistory.filter(t => {
+        const removedDate = new Date(t.removedAt || t.date);
+        const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+        return removedDate >= weekAgo;
+      }).length;
+
+      const thisMonth = todoHistory.filter(t => {
+        const removedDate = new Date(t.removedAt || t.date);
+        const monthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+        return removedDate >= monthAgo;
+      }).length;
+
+      todoHistoryStats.innerHTML = `
+        <div style="display:flex;justify-content:space-between;background:white;padding:10px;border-radius:5px;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
+          <div style="text-align:center;">
+            <div style="font-weight:600;color:#ff6b6b;">${total}</div>
+            <div style="font-size:0.8em;">Deleted</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-weight:600;color:#ff6b6b;">${thisWeek}</div>
+            <div style="font-size:0.8em;">This Week</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-weight:600;color:#ff6b6b;">${thisMonth}</div>
+            <div style="font-size:0.8em;">This Month</div>
+          </div>
+        </div>
+      `;
     }
 
-    // Achievement functionality with persistence
-    document.getElementById('achievement-form').addEventListener('submit', function(e) {
-      e.preventDefault();
-      const title = document.getElementById('achievement-title').value;
-      const description = document.getElementById('achievement-description').value;
-      const date = document.getElementById('achievement-date').value;
-      
-      const achievement = {
-        title: title,
-        description: description,
-        date: date,
-        createdAt: new Date().toISOString()
-      };
-      
-      if (achievement.title && achievement.description && achievement.date) {
-        addAchievement(achievement);
-        document.getElementById('achievement-form').reset();
-      }
+    // Todo history button functionality
+    todoHistoryBtn.addEventListener('click', function() {
+      todoFormView.style.display = 'none';
+      todoHistoryView.style.display = 'block';
+      renderTodoHistory();
+      updateTodoHistoryStats();
     });
 
-    function addAchievement(achievement) {
-      const achievements = getAchievements();
-      achievements.push(achievement);
-      saveAchievements(achievements);
-      renderAchievements();
-    }
+    // Todo back button functionality
+    todoBackBtn.addEventListener('click', function() {
+      todoHistoryView.style.display = 'none';
+      todoFormView.style.display = 'block';
+    });
 
-    function renderAchievements() {
-      const achievements = getAchievements();
-      const list = document.getElementById('achievement-list');
-      list.innerHTML = '';
-      
-      achievements.forEach((achievement, index) => {
-        const li = document.createElement('li');
-        const date = new Date(achievement.date);
-        const formattedDate = date.toLocaleDateString('en-US', { 
-          weekday: 'short', 
-          year: 'numeric', 
-          month: 'short', 
-          day: 'numeric'
-        });
-        
-        li.innerHTML = `
-          <div style="padding: 15px; background: #f5f5f5; margin: 8px 0; border-radius: 8px; border-left: 4px solid #ffd700;">
-            <strong style="color: #333;">🏆 ${achievement.title}</strong><br>
-            <small style="color: #666;">${achievement.description}</small><br>
-            <small style="color: #7c5fe6;">📅 ${formattedDate}</small>
-            <button onclick="deleteAchievement(${index})" style="float: right; background: #ff4444; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">Delete</button>
-          </div>
-        `;
-        list.appendChild(li);
-      });
-    }
+    // Add event listeners for todo history search and filter
+    todoHistorySearch.addEventListener('input', renderTodoHistory);
+    todoHistoryFilter.addEventListener('change', renderTodoHistory);
 
-    function deleteAchievement(index) {
-      const achievements = getAchievements();
-      achievements.splice(index, 1);
-      saveAchievements(achievements);
-      renderAchievements();
-    }
-
-    function renderSection(section) {
-      switch(section) {
-        case 'todos':
-          renderTodos();
-          break;
-        case 'events':
-          renderEvents();
-          break;
-        case 'achievements':
-          renderAchievements();
-          break;
-      }
-    }
+    showSignup.onclick = () => {
+      loginBox.style.display = 'none';
+      signupBox.style.display = '';
+      loginError.textContent = '';
+      signupError.textContent = '';
+    };
   </script>
 </body>
 </html> 
