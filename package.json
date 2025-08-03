@@ -1,0 +1,14 @@
+{
+  "name": "eduagenda",
+  "version": "1.0.0",
+  "description": "Student Management System with React frontend and Node.js backend",
+  "main": "index.js",
+  "scripts": {
+    "build": "cd frontend && npm install && npm run build",
+    "start": "cd frontend && npm start",
+    "dev": "cd frontend && npm start"
+  },
+  "keywords": ["student", "management", "react", "nodejs"],
+  "author": "mukesh9177",
+  "license": "MIT"
+} 
