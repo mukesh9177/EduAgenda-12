@@ -1,38 +1,203 @@
-.App {
-  text-align: center;
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+  position: relative;
+  overflow-x: hidden;
 }
 
-.App-logo {
-  height: 40vmin;
+/* Abstract SVG background shapes */
+.bg-shape {
+  position: absolute;
+  z-index: 0;
   pointer-events: none;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.bg-shape1 {
+  top: -120px; 
+  left: -120px; 
+  width: 350px; 
+  opacity: 0.25;
 }
 
-.App-header {
-  background-color: #282c34;
+.bg-shape2 {
+  bottom: -100px; 
+  right: -100px; 
+  width: 300px; 
+  opacity: 0.18;
+}
+
+.App {
   min-height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+/* Navigation Styles */
+nav {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+nav ul {
+  list-style: none;
   display: flex;
-  flex-direction: column;
+  gap: 2rem;
+  margin: 0;
+  padding: 0;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+nav li {
+  margin: 0;
+}
+
+nav a {
+  color: #4f8cff;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+nav a:hover {
+  background: rgba(79, 140, 255, 0.1);
+  color: #7c5fe6;
+}
+
+nav a.active {
+  color: #7c5fe6;
+  background: rgba(124, 95, 230, 0.1);
+}
+
+/* Auth Page Styles */
+.auth-page {
+  min-height: calc(100vh - 80px);
+  display: flex;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  position: relative;
+  z-index: 1;
 }
 
-.App-link {
-  color: #61dafb;
+.auth-box {
+  background: #fff;
+  padding: 36px 32px;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 340px;
+  max-width: 95vw;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+  color: #222;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.auth-link {
+  color: #4f8cff;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: 1em;
+  margin-top: -8px;
+  margin-bottom: 8px;
+  align-self: flex-end;
+}
+
+.auth-error {
+  color: #d32f2f;
+  font-size: 0.95em;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+input[type="text"], 
+input[type="datetime-local"], 
+input[type="email"], 
+input[type="password"], 
+input[type="tel"], 
+input[type="date"], 
+input[type="time"] {
+  padding: 12px 14px;
+  border: 1.5px solid #ccc;
+  border-radius: 8px;
+  font-size: 1.15em;
+  background: #f7faff;
+}
+
+input[type="submit"], 
+button {
+  background: linear-gradient(90deg, #4f8cff 0%, #a084ee 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 14px 24px;
+  cursor: pointer;
+  font-size: 1.15em;
+  font-weight: 700;
+  transition: background 0.2s, box-shadow 0.2s, filter 0.15s;
+  box-shadow: 0 2px 12px 0 #4f8cff44;
+}
+
+input[type="submit"].login-btn, 
+button.login-btn, 
+input[type="submit"].signup-btn, 
+button.signup-btn {
+  background: linear-gradient(90deg, #7c5fe6 0%, #4f8cff 100%);
+  box-shadow: 0 4px 18px 0 #7c5fe644, 0 2px 8px rgba(79,140,255,0.08);
+  filter: brightness(1.08);
+  border: 2px solid #4f8cff;
+}
+
+/* Dashboard and Content Styles */
+.dashboard-container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.content-box {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 18px;
+  padding: 2rem;
+  margin: 1rem 0;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  nav ul {
+    flex-direction: column;
+    gap: 1rem;
   }
-  to {
-    transform: rotate(360deg);
+  
+  .auth-box {
+    margin: 1rem;
+    padding: 24px 20px;
+  }
+  
+  .dashboard-container {
+    padding: 1rem;
   }
 }
