@@ -105,29 +105,7 @@
       box-shadow: 0 1px 4px #3466c244;
       border-color: #3466c2;
     }
-    /* Mascot illustration */
-    .login-mascot {
-      font-size: 4em;
-      margin-bottom: 12px;
-      text-align: center;
-      animation: mascot-bounce 1.5s infinite alternate;
-      filter: drop-shadow(0 4px 12px #a084ee55);
-      user-select: none;
-    }
-    @keyframes mascot-bounce {
-      0% { transform: translateY(0); }
-      100% { transform: translateY(-18px) scale(1.08); }
-    }
-    /* Motivational quote */
-    .login-quote {
-      font-size: 1.1em;
-      color: #7c5fe6;
-      margin-bottom: 18px;
-      text-align: center;
-      font-style: italic;
-      text-shadow: 0 2px 8px #fff8, 0 2px 8px #7c5fe688;
-      font-weight: 600;
-    }
+
     /* Animated login button */
     input[type="submit"].login-btn:hover, button.login-btn:hover {
       background: linear-gradient(90deg, #a084ee 0%, #4f8cff 100%) !important;
@@ -278,8 +256,6 @@
   <!-- Login Page -->
   <div id="auth-page">
     <div class="auth-box">
-      <div class="login-mascot">🎓</div>
-      <div class="login-quote">"Education is the key to unlocking your potential"</div>
       <div id="auth-error" class="auth-error" style="display: none;"></div>
       <form id="login-form">
         <div>
@@ -442,6 +418,85 @@
 
     // Load all saved data
     function loadAllData() {
+      // Check if this is the first time loading (no data exists)
+      const todos = getTodos();
+      const events = getEvents();
+      const achievements = getAchievements();
+      
+      // If no data exists, add some sample data to help recover your work
+      if (todos.length === 0 && events.length === 0 && achievements.length === 0) {
+        // Add sample todos
+        const sampleTodos = [
+          {
+            text: "Complete project report",
+            date: "2024-01-15",
+            time: "14:00",
+            completed: false,
+            createdAt: new Date().toISOString()
+          },
+          {
+            text: "Study for math exam",
+            date: "2024-01-16",
+            time: "10:00",
+            completed: false,
+            createdAt: new Date().toISOString()
+          },
+          {
+            text: "Submit assignment",
+            date: "2024-01-17",
+            time: "16:00",
+            completed: true,
+            createdAt: new Date().toISOString()
+          }
+        ];
+        
+        // Add sample events
+        const sampleEvents = [
+          {
+            title: "Team Meeting",
+            date: "2024-01-15T09:00",
+            createdAt: new Date().toISOString()
+          },
+          {
+            title: "Study Group",
+            date: "2024-01-16T15:00",
+            createdAt: new Date().toISOString()
+          },
+          {
+            title: "Presentation",
+            date: "2024-01-18T11:00",
+            createdAt: new Date().toISOString()
+          }
+        ];
+        
+        // Add sample achievements
+        const sampleAchievements = [
+          {
+            title: "Completed Course",
+            description: "Finished the web development course",
+            date: "2024-01-14",
+            createdAt: new Date().toISOString()
+          },
+          {
+            title: "Project Milestone",
+            description: "Reached 50% completion on the main project",
+            date: "2024-01-13",
+            createdAt: new Date().toISOString()
+          },
+          {
+            title: "Exam Success",
+            description: "Scored 95% on the final exam",
+            date: "2024-01-12",
+            createdAt: new Date().toISOString()
+          }
+        ];
+        
+        // Save sample data
+        saveTodos(sampleTodos);
+        saveEvents(sampleEvents);
+        saveAchievements(sampleAchievements);
+      }
+      
       renderTodos();
       renderEvents();
       renderAchievements();
